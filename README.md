@@ -1,5 +1,5 @@
 # example
-An repository showing an example of use for the sparpy/aboria libraries
+A repository showing an example of use for the sparpy/aboria libraries
 
 ## Prerequisites:
 
