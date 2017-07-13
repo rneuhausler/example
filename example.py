@@ -68,7 +68,7 @@ def test_exponential_force():
     simulation.add_particles(particles, D)
     simulation.add_particles(fixed, 0)
     simulation.add_force(particles, fixed, sparpy.exponential_force2(cutoff, epsilon))
-    simulation.add_force(particles, particles, sparpy.more_potential_force2((cutoff, equilibrium_distance, well_depth, well_width, repulsive)
+    simulation.add_force(particles, particles, sparpy.morse_force2((cutoff, equilibrium_distance, well_depth, well_width, repulsive)
 
     
     
