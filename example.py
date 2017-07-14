@@ -12,19 +12,18 @@ def test_exponential_force():
     number_of_observations = 100
     integrate_time = sim_time / number_of_observations
     dt = 0.01
+
+    cutoff_exponential = 3
     epsilon = 10
-    cutoff = 20
-    
-    #cutoff = 
-    equilibrium_distance = 3
-    well_depth = 10
-    well_width = .5
-    repulsive = -1
     
     
-    
-    
-    
+    cutoff_morse = 0
+    Ca = 5
+    la = 20
+    Cr = 3000
+    lr = 10
+
+
     
     lower_grid  = 2.5
     upper_grid  = 22.5
@@ -44,7 +43,7 @@ def test_exponential_force():
         for j in range(len(grid)):
             fixed[count].position = [grid[i],grid[j]]
             fixed[count].velocity = [0,0]
-            U = random.randrange(1,101)
+            U = random.uniform(0,100)
             if U <= percent_coral:
                 fixed[count].species = 0
             elif U > percent_coral + percent_turf:
@@ -67,8 +66,8 @@ def test_exponential_force():
     simulation.set_domain(lower_bound, upper_bound, periodic)
     simulation.add_particles(particles, D)
     simulation.add_particles(fixed, 0)
-    simulation.add_force(particles, fixed, sparpy.exponential_force2(cutoff, epsilon))
-    simulation.add_force(particles, particles, sparpy.morse_force2((cutoff, equilibrium_distance, well_depth, well_width, repulsive)
+    simulation.add_force(particles, fixed, sparpy.exponential_force2(cutoff_exponential, epsilon))
+    simulation.add_force(particles, particles, sparpy.morse_force2(cutoff_morse, Ca, la, Cr, lr))
 
     
     
