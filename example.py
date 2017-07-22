@@ -8,18 +8,30 @@ def test_exponential_force():
     upper_bound = [25, 25]
     periodic = [True, True]
     
-    sim_time = 10000
+    sim_time = 10000.0
     number_of_observations = 100
     integrate_time = sim_time / number_of_observations
     dt = 0.01
     
-    grid_dt = 100
+    actual_time = 1    
+    grid_dt = 100.0
     grid_updates_per_observation = int(integrate_time / grid_dt)
     
+    #parameters
+    scale_dt = .0001
+    density_scale = grid_dt/dt
+    a = 0.2 * scale_dt
+    d = 0.6 * scale_dt
+    gamma = 0.75 * scale_dt
+    r = 1.0 * scale_dt
+    gp = 0.9 * scale_dt 
+    gu = 0.1 * scale_dt
+    
+    
     #lr and la cannot be zero (in the denominator)
-    C = {'cutoff':25, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':0,'percent':37}
-    M = {'cutoff':25, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':1, 'percent':37}
-    T = {'cutoff':10, 'Ca':0, 'la':0.1, 'Cr':1, 'lr':4, 'type':2, 'percent':26}
+    C = {'cutoff':25, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':0,'percent':20}
+    T = {'cutoff':25, 'Ca':0, 'la':0.1, 'Cr':1, 'lr':4, 'type':1, 'percent':40}
+    M = {'cutoff':10, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':2, 'percent':40}
     F = {'cutoff':6, 'Ca':0.05, 'la':5, 'Cr':1, 'lr':1, 'type':3, 'count': 20}
 
 
@@ -72,14 +84,10 @@ def test_exponential_force():
     simulation.add_force(particles, particles, sparpy.morse_force2(F['cutoff'], F['Ca'], F['la'], F['Cr'], F['lr'], F['type']))
 
 
-    simulation.add_action(fixed, particles, sparpy.calculate_density2(2.5,dt))
-    simulation.add_action(fixed, fixed, sparpy.calculate_density2(6,dt))
-
-
-
-
-    #    simulation.add_force(particles, particles, sparpy.exponential_force2(cutoff, epsilon))
-
+    simulation.add_action(fixed, particles, sparpy.calculate_density2(2.5,dt/(F['count'] * grid_dt)))
+    simulation.add_action(fixed, fixed, sparpy.calculate_density2(step_grid,dt/grid_dt))
+    
+    simulation_grid = sparpy.Simulation2()
 
         
     for i in range(number_of_observations):
@@ -88,11 +96,27 @@ def test_exponential_force():
                 p.density = [0.0,0.0,0.0,0.0]
             simulation.integrate(grid_dt, dt)
             for p in fixed:
-                if p.density[3] > 0:
-                    p.species = C['type']
+                U = random.uniform(0,1)
+                if p.species == C['type']:
+                    if U < d * grid_dt:
+                        p.species = T['type']
+                    elif U < d * grid_dt + a * p.density[M['type']] * grid_dt:
+                        p.species = M['type']
+                if p.species == T['type']:
+                    if U < gamma * grid_dt * p.density[M['type']] :
+                        p.species = M['type']
+                    if U < (gamma * grid_dt * p.density[M['type']] + 
+                            r * grid_dt * p.density[C['type']]):
+                        p.species = C['type']
+                if p.species == M['type']:
+                    if U < (gu + gp * p.density[F['type']]) * grid_dt:
+                        p.species = T['type']
+    
+
+         
+                    
         #simulation.update_grid()
           #print particles[0].force
-
         #simulation.update_grid()
         #print particles[0].force
 
@@ -109,12 +133,43 @@ def test_exponential_force():
 if __name__ == "__main__":
     test_exponential_force()
 
+
+"""
+       
+    for i in range(number_of_observations):
+        for j in range(grid_updates_per_observation):
+            for p in fixed:
+                p.density = [0.0,0.0,0.0,0.0]
+            simulation.integrate(grid_dt, dt)
+            for p in fixed:
+                U = random.uniform(0,1)
+                if p.species == C['type']:
+                    if U < d * grid_dt:
+                        p.species = T['type']
+                    elif U < d * grid_dt + a * (1 + p.density[M['type']]) * grid_dt:
+                        p.species = M['type']
+                if p.species == T['type']:
+                    if U < gamma * grid_dt * (1 + p.density[M['type']]) :
+                        p.species = M['type']
+                    if U < (gamma * grid_dt * (1 + p.density[M['type']]) + 
+                            r * grid_dt * (1 + p.density[C['type']])):
+                        p.species = C['type']
+                if p.species == M['type']:
+                    if U < g * (1 + p.density[T['type']]) * (1 + p.density[F['type']]):
+                        p.species = T['type']
+"""
+
+
+
 """
     sim_time = 10000
     number_of_observations = 100
     integrate_time = sim_time / number_of_observations
     dt = 0.01
 """
+
+
+
 
 
 """
