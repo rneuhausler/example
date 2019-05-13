@@ -1,7 +1,7 @@
 import sparpy
 import random
 import csv
-import numpy
+import numpy as np
 
 
 def test_exponential_force():
@@ -88,15 +88,14 @@ def test_exponential_force():
     simulation.add_action(fixed, fixed, sparpy.calculate_density2(step_grid,dt/grid_dt))
     simulation_grid = sparpy.Simulation2()
 
-    ### Create Datatable to store each run and each node in
-    column.
+    ### Create Datatable to store each run and each node
 
 
     ### Running the Simulation
     number_of_nodes = len(grid) ** 2
     number_of_recordings = number_of_observations * grid_updates_per_observation
     node_type = np.zeros((number_of_recordings, number_of_nodes))
-    node_density = np.zeros((number_of_recordings, number_of_nodes))
+    node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
     row = 0
     column = 0
 
@@ -130,7 +129,7 @@ def test_exponential_force():
 
                 ## Store in row for specific column
                 node_type[row,column] = p.species
-                node_density[row,column] = p.density
+                node_density[row,column,] = p.density
                 column = column + 1
             ## update position of row
             column = 0
