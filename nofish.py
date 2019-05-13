@@ -133,6 +133,7 @@ def test_exponential_force():
                 node_density[row,column] = p.density
                 column = column + 1
             ## update position of row
+            column = 0
             row = row + 1
 
     with open('type_recording.csv', 'w') as csvFile:
