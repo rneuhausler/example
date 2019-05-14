@@ -113,13 +113,13 @@ def test_exponential_force():
                 if p.species == C['type']:
                     if U < d * grid_dt * p.density[C['type']]:
                         p.species = T['type']
-                    elif U < d * grid_dt + a * p.density[M['type']] * grid_dt:
+                    elif U < d * grid_dt * p.density[C['type']] + a * p.density[M['type']] * grid_dt:
                         p.species = M['type']
 
                 if p.species == T['type']:
-                    if U < gamma * grid_dt * p.density[M['type']] :
+                    if U > (1 - gamma * grid_dt * p.density[M['type']]):
                         p.species = M['type']
-                    if U < r * grid_dt * p.density[C['type']]:
+                    elif U > (1 - (gamma * grid_dt * p.density[M['type']] + r * grid_dt * p.density[C['type']])):
                         p.species = C['type']
 
                 if p.species == M['type']:
