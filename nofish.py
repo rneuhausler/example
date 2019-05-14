@@ -12,7 +12,7 @@ def test_exponential_force():
     upper_bound = [40, 40]
     periodic = [True, True]
 
-    sim_time = 10000.0
+    sim_time = 15000.0
     number_of_observations = 100
     integrate_time = sim_time / number_of_observations
     dt = 0.01
@@ -27,7 +27,7 @@ def test_exponential_force():
     scale_dt = .0001
     density_scale = grid_dt/dt
     a = 0.2 * scale_dt
-    d = 0.6 * scale_dt
+    d = 0.4 * scale_dt
     gamma = 0.75 * scale_dt
     r = 1.0 * scale_dt
     gp = 0.9 * scale_dt
@@ -111,7 +111,7 @@ def test_exponential_force():
                 U = random.uniform(0,1)
 
                 if p.species == C['type']:
-                    if U < d * grid_dt:
+                    if U < d * grid_dt * p.density[C['type']]:
                         p.species = T['type']
                     elif U < d * grid_dt + a * p.density[M['type']] * grid_dt:
                         p.species = M['type']
@@ -119,8 +119,7 @@ def test_exponential_force():
                 if p.species == T['type']:
                     if U < gamma * grid_dt * p.density[M['type']] :
                         p.species = M['type']
-                    if U < (gamma * grid_dt * p.density[M['type']] +
-                            r * grid_dt * p.density[C['type']]):
+                    if U < r * grid_dt * p.density[C['type']]:
                         p.species = C['type']
 
                 if p.species == M['type']:
