@@ -90,6 +90,7 @@ def test_exponential_force():
 
     ### Create Datatable to store each run and each node
 
+    runs = 5
 
     ### Running the Simulation
     number_of_nodes = len(grid) ** 2
@@ -99,50 +100,54 @@ def test_exponential_force():
     row = 0
     column = 0
 
-    for i in range(number_of_observations):
+    path = 'csvs/'
 
-        for j in range(grid_updates_per_observation):
+    for n in range(runs):
 
-            for p in fixed: #fixed is the grid
-                p.density = [0.0,0.0,0.0,0.0]
-            simulation.integrate(grid_dt, dt)
+        for i in range(number_of_observations):
 
-            for p in fixed:
-                U = random.uniform(0,1)
+            for j in range(grid_updates_per_observation):
 
-                if p.species == C['type']:
-                    if U < d * grid_dt * p.density[C['type']]:
-                        p.species = T['type']
-                    elif U < d * grid_dt * p.density[C['type']] + a * p.density[M['type']] * grid_dt:
-                        p.species = M['type']
+                for p in fixed: #fixed is the grid
+                    p.density = [0.0,0.0,0.0,0.0]
+                simulation.integrate(grid_dt, dt)
 
-                if p.species == T['type']:
-                    if U > (1 - gamma * grid_dt * p.density[M['type']]):
-                        p.species = M['type']
-                    elif U > (1 - (gamma * grid_dt * p.density[M['type']] + r * grid_dt * p.density[C['type']])):
-                        p.species = C['type']
+                for p in fixed:
+                    U = random.uniform(0,1)
 
-                if p.species == M['type']:
-                    if U < (gu + gp) * grid_dt:
-                        p.species = T['type']
+                    if p.species == C['type']:
+                        if U < d * grid_dt * p.density[C['type']]:
+                            p.species = T['type']
+                        elif U < d * grid_dt * p.density[C['type']] + a * p.density[M['type']] * grid_dt:
+                            p.species = M['type']
 
-                ## Store in row for specific column
-                node_type[row,column] = p.species
-                node_density[row,column,] = p.density
-                column = column + 1
-            ## update position of row
-            column = 0
-            row = row + 1
+                    if p.species == T['type']:
+                        if U > (1 - gamma * grid_dt * p.density[M['type']]):
+                            p.species = M['type']
+                        elif U > (1 - (gamma * grid_dt * p.density[M['type']] + r * grid_dt * p.density[C['type']])):
+                            p.species = C['type']
 
-    with open('type_recording.csv', 'w') as csvFile:
-        writer = csv.writer(csvFile)
-        writer.writerows(node_type)
-    csvFile.close()
+                    if p.species == M['type']:
+                        if U < (gu + gp) * grid_dt:
+                            p.species = T['type']
 
-    with open('density_recording.csv', 'w') as csvFile:
-        writer = csv.writer(csvFile)
-        writer.writerows(node_density)
-    csvFile.close()
+                    ## Store in row for specific column
+                    node_type[row,column] = p.species
+                    node_density[row,column,] = p.density
+                    column = column + 1
+                ## update position of row
+                column = 0
+                row = row + 1
+
+        with open(path + 'type_recording' + str(n) + '.csv', 'w') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerows(node_type)
+        csvFile.close()
+
+        with open(path + 'density_recording' + str(n) + '.csv', 'w') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerows(node_density)
+        csvFile.close()
 
 
 if __name__ == "__main__":
