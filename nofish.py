@@ -56,53 +56,54 @@ def test_exponential_force():
         print "percentages do not add up to 100"
 
 
-    ### Creating the Grid Stochastically
-
-    fixed = sparpy.Particles2(len(grid) ** 2)
-    count = 0
-    for i in range(len(grid)):
-        for j in range(len(grid)):
-            fixed[count].position = [grid[i],grid[j]]
-            fixed[count].velocity = [0,0]
-            U = random.uniform(0,100)
-            if U <= C['percent']:
-                fixed[count].species = 0
-            elif U > C['percent'] + T['percent']:
-                fixed[count].species = 2
-            else:
-                fixed[count].species = 1
-            count = count+1
-
-    ### Placing the fish stochastically
-    ### Defining the simulation
-
-    simulation = sparpy.Simulation2()
-    simulation.set_domain(lower_bound, upper_bound, periodic)
-   # simulation.add_particles(particles, D)
-    simulation.add_particles(fixed, 0)
-   # simulation.add_force(particles, fixed, sparpy.morse_force2(C['cutoff'], C['Ca'], C['la'], C['Cr'], C['lr'], C['type']))
-   # simulation.add_force(particles, fixed, sparpy.morse_force2(T['cutoff'], T['Ca'], T['la'], T['Cr'], T['lr'], T['type']))
-   # simulation.add_force(particles, fixed, sparpy.morse_force2(M['cutoff'], M['Ca'], M['la'], M['Cr'], M['lr'], M['type']))
-   # simulation.add_force(particles, particles, sparpy.morse_force2(F['cutoff'], F['Ca'], F['la'], F['Cr'], F['lr'], F['type']))
-   # simulation.add_action(fixed, particles, sparpy.calculate_density2(2.5,dt/(F['count'] * grid_dt)))
-    simulation.add_action(fixed, fixed, sparpy.calculate_density2(step_grid,dt/grid_dt))
-    simulation_grid = sparpy.Simulation2()
-
-    ### Create Datatable to store each run and each node
-
-    runs = 5
-
-    ### Running the Simulation
-    number_of_nodes = len(grid) ** 2
-    number_of_recordings = number_of_observations * grid_updates_per_observation
-    node_type = np.zeros((number_of_recordings, number_of_nodes))
-    node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
-    row = 0
-    column = 0
-
-    path = 'csvs/'
+    runs = 3
 
     for n in range(runs):
+
+
+        ### Creating the Grid Stochastically
+
+        fixed = sparpy.Particles2(len(grid) ** 2)
+        count = 0
+        for i in range(len(grid)):
+            for j in range(len(grid)):
+                fixed[count].position = [grid[i],grid[j]]
+                fixed[count].velocity = [0,0]
+                U = random.uniform(0,100)
+                if U <= C['percent']:
+                    fixed[count].species = 0
+                elif U > C['percent'] + T['percent']:
+                    fixed[count].species = 2
+                else:
+                    fixed[count].species = 1
+                count = count+1
+
+        ### Placing the fish stochastically
+        ### Defining the simulation
+
+        simulation = sparpy.Simulation2()
+        simulation.set_domain(lower_bound, upper_bound, periodic)
+       # simulation.add_particles(particles, D)
+        simulation.add_particles(fixed, 0)
+       # simulation.add_force(particles, fixed, sparpy.morse_force2(C['cutoff'], C['Ca'], C['la'], C['Cr'], C['lr'], C['type']))
+       # simulation.add_force(particles, fixed, sparpy.morse_force2(T['cutoff'], T['Ca'], T['la'], T['Cr'], T['lr'], T['type']))
+       # simulation.add_force(particles, fixed, sparpy.morse_force2(M['cutoff'], M['Ca'], M['la'], M['Cr'], M['lr'], M['type']))
+       # simulation.add_force(particles, particles, sparpy.morse_force2(F['cutoff'], F['Ca'], F['la'], F['Cr'], F['lr'], F['type']))
+       # simulation.add_action(fixed, particles, sparpy.calculate_density2(2.5,dt/(F['count'] * grid_dt)))
+        simulation.add_action(fixed, fixed, sparpy.calculate_density2(step_grid,dt/grid_dt))
+        simulation_grid = sparpy.Simulation2()
+
+        ### Create Datatable to store each run and each node
+
+        ### Running the Simulation
+        number_of_nodes = len(grid) ** 2
+        number_of_recordings = number_of_observations * grid_updates_per_observation
+        node_type = np.zeros((number_of_recordings, number_of_nodes))
+        node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
+        row = 0
+        column = 0
+
+        path = 'csvs/'
 
         for i in range(number_of_observations):
 
