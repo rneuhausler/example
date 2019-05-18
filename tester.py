@@ -13,7 +13,7 @@ def test_exponential_force():
     periodic = [True, True]
 
     sim_time = 10000
-    number_of_observations = 100 
+    number_of_observations = 100
     integrate_time = sim_time / number_of_observations
     dt = 0.01
 
@@ -53,7 +53,7 @@ def test_exponential_force():
         print "percentages do not add up to 100"
 
     print("grid start")
-    
+
     T_count = 0
     M_count = 0
     C_count = 0
@@ -107,10 +107,15 @@ def test_exponential_force():
         number_of_nodes = len(grid) ** 2
         number_of_recordings = number_of_observations * grid_updates_per_observation
         node_type = np.zeros((number_of_recordings, number_of_nodes))
+
+        turf_percent = np.zeros((1,number_of_recordings))
+        macro_percent = np.zeros((1,number_of_recordings))
+        coral_percent = np.zeros((1,number_of_recordings))
+
         #node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
         row = 0
         column = 0
-        
+
         T_percent = T_count/number_of_nodes
         M_percent = M_count/number_of_nodes
         C_percent = C_count/number_of_nodes
@@ -136,17 +141,17 @@ def test_exponential_force():
                         if U < d * grid_dt * T_percent:
                             p.species = T['type']
                             T_count = T_count + 1
-                        elif U < d * grid_dt * C_percent + a * M_percent * grid_dt:
+                        elif U < d * grid_dt * C_percent + a * M_percent * C_percent * grid_dt:
                             p.species = M['type']
                             M_count = M_count + 1
                         else:
                             C_count = C_count + 1
 
                     if p.species == T['type']:
-                        if U > (1 - gamma * grid_dt * M_percent):
+                        if U > (1 - gamma * grid_dt * M_percent * T_percent):
                             p.species = M['type']
                             M_count = M_count + 1
-                        elif U > (1 - (gamma * grid_dt * M_percent + r * grid_dt * C_percent)):
+                        elif U > (1 - (gamma * grid_dt * M_percent * T_percent + r * grid_dt * C_percent * T_percent)):
                             p.species = C['type']
                             C_count = C_count + 1
                         else:
@@ -163,6 +168,10 @@ def test_exponential_force():
                     #node_density[row,column,] = p.density
                     column = column + 1
                 ## update position of row
+                turf_percent[1,row] = T_percent
+                macro_percent[1,row] = M_percent
+                coral_percent[1,row] = C_percent
+
                 column = 0
                 row = row + 1
                 # updating new percents
@@ -179,6 +188,13 @@ def test_exponential_force():
         with open(path + 'type_recording_test' + str(n) + '.csv', 'w') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerows(node_type)
+        csvFile.close()
+
+        with open(path + 'percent_recording_test' + str(n) + '.csv', 'w') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerows(T_percent)
+            writer.writerows(M_percent)
+            writer.writerows(C_percent)
         csvFile.close()
 
 if __name__ == "__main__":
