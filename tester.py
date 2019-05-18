@@ -114,6 +114,9 @@ def test_exponential_force():
         T_percent = T_count/number_of_nodes
         M_percent = M_count/number_of_nodes
         C_percent = C_count/number_of_nodes
+        print(T_percent)
+        print(M_percent)
+        print(C_percent)
         T_count = 0
         M_count = 0
         C_count = 0
@@ -150,7 +153,7 @@ def test_exponential_force():
                             T_count = T_count + 1
 
                     if p.species == M['type']:
-                        if U < (g*M_percent/(M_percent + T_percent)) * grid_dt * .1:
+                        if U < ((g*M_percent + 1)/(M_percent + T_percent + 1)) * grid_dt * .1:
                             p.species = T['type']
                             T_count = T_count + 1
                         else:
