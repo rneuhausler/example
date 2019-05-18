@@ -12,15 +12,13 @@ def test_exponential_force():
     upper_bound = [40, 40]
     periodic = [True, True]
 
-    sim_time = 15000.0
-    number_of_observations = 100
+    sim_time = 10
+    number_of_observations = 1
     integrate_time = sim_time / number_of_observations
     dt = 0.01
 
-    grid_dt = 100.0
+    grid_dt = 10
     grid_updates_per_observation = int(integrate_time / grid_dt)
-
-
 
     ### Initial parameters
 
@@ -54,6 +52,8 @@ def test_exponential_force():
     if C['percent'] + T['percent'] + M['percent'] != 100:
         print "percentages do not add up to 100"
 
+    print("grid start")
+
     runs = 1
     for n in range(runs):
         #Checkered grid
@@ -74,6 +74,7 @@ def test_exponential_force():
                     fixed[count].species = 2
                     t = 0
                 count = count+1
+                print("grid point 1 created")
             #Split grid
 
         ### Placing the fish stochastically
@@ -91,6 +92,8 @@ def test_exponential_force():
         simulation.add_action(fixed, fixed, sparpy.calculate_density2(upper_grid,dt/grid_dt))
         simulation_grid = sparpy.Simulation2()
 
+        print("simulation set up")
+
         ### Create Datatable to store each run and each node
 
         ### Running the Simulation
@@ -102,6 +105,8 @@ def test_exponential_force():
         column = 0
 
         path = 'csvs/'
+
+        print('starting observation 1')
 
         for i in range(number_of_observations):
 
@@ -118,6 +123,8 @@ def test_exponential_force():
                 ## update position of row
                 column = 0
                 row = row + 1
+                print('p updated')
+            print('obs 1 done'+str(i))
 
         with open(path + 'type_recording_test' + str(n) + '.csv', 'w') as csvFile:
             writer = csv.writer(csvFile)
