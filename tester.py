@@ -53,6 +53,10 @@ def test_exponential_force():
         print "percentages do not add up to 100"
 
     print("grid start")
+    
+    T_count = 0
+    M_count = 0
+    C_count = 0
 
     runs = 1
     for n in range(runs):
@@ -67,12 +71,15 @@ def test_exponential_force():
                 if t == 0:
                     fixed[count].species = 0
                     t = 1
+                    C_count = C_count + 1
                 elif t == 1:
                     fixed[count].species = 1
                     t = 2
+                    M_count = M_count + 1
                 else:
                     fixed[count].species = 2
                     t = 0
+                    T_count = T_count + 1
                 count = count+1
                 print("grid point 1 created")
             #Split grid
@@ -103,6 +110,13 @@ def test_exponential_force():
         #node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
         row = 0
         column = 0
+        
+        T_percent = T_count/number_of_nodes
+        M_percent = M_count/number_of_nodes
+        C_percent = C_count/number_of_nodes
+        T_count = 0
+        M_count = 0
+        C_count = 0
 
         path = 'csvs/'
 
