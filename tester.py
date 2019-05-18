@@ -111,12 +111,10 @@ def test_exponential_force():
         for i in range(number_of_observations):
 
             for j in range(grid_updates_per_observation):
-
-                for p in fixed: #fixed is the grid
-                    #p.density = [0.0,0.0,0.0,0.0]
                 simulation.integrate(grid_dt, dt)
 
                 for p in fixed:
+                    U = random.uniform(0,1)
                     if p.species == C['type']:
                         if U < d * grid_dt * T_percent:
                             p.species = T['type']
@@ -165,12 +163,6 @@ def test_exponential_force():
             writer = csv.writer(csvFile)
             writer.writerows(node_type)
         csvFile.close()
-
-        #with open(path + 'density_recording_test' + str(n) + '.csv', 'w') as csvFile:
-        #    writer = csv.writer(csvFile)
-        #    writer.writerows(node_density)
-        #csvFile.close()
-
 
 if __name__ == "__main__":
     test_exponential_force()
