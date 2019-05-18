@@ -12,17 +12,17 @@ def test_exponential_force():
     upper_bound = [40, 40]
     periodic = [True, True]
 
-    sim_time = 10
+    sim_time = 100
     number_of_observations = 1
     integrate_time = sim_time / number_of_observations
     dt = 0.01
 
-    grid_dt = 10
+    grid_dt = 100
     grid_updates_per_observation = int(integrate_time / grid_dt)
 
     ### Initial parameters
 
-    scale_dt = .0001
+    scale_dt = .01
     density_scale = grid_dt/dt
     a = 0.2 * scale_dt
     d = 0.4 * scale_dt
@@ -89,7 +89,7 @@ def test_exponential_force():
        # simulation.add_force(particles, fixed, sparpy.morse_force2(M['cutoff'], M['Ca'], M['la'], M['Cr'], M['lr'], M['type']))
        # simulation.add_force(particles, particles, sparpy.morse_force2(F['cutoff'], F['Ca'], F['la'], F['Cr'], F['lr'], F['type']))
        # simulation.add_action(fixed, particles, sparpy.calculate_density2(2.5,dt/(F['count'] * grid_dt)))
-        simulation.add_action(fixed, fixed, sparpy.calculate_density2(upper_grid,dt/grid_dt))
+        #simulation.add_action(fixed, fixed, sparpy.calculate_density2(upper_grid,dt/grid_dt))
         simulation_grid = sparpy.Simulation2()
 
         print("simulation set up")
@@ -100,7 +100,7 @@ def test_exponential_force():
         number_of_nodes = len(grid) ** 2
         number_of_recordings = number_of_observations * grid_updates_per_observation
         node_type = np.zeros((number_of_recordings, number_of_nodes))
-        node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
+        #node_density = np.zeros((number_of_recordings, number_of_nodes, 4))
         row = 0
         column = 0
 
@@ -113,16 +113,51 @@ def test_exponential_force():
             for j in range(grid_updates_per_observation):
 
                 for p in fixed: #fixed is the grid
-                    p.density = [0.0,0.0,0.0,0.0]
+                    #p.density = [0.0,0.0,0.0,0.0]
                 simulation.integrate(grid_dt, dt)
+
                 for p in fixed:
+                    if p.species == C['type']:
+                        if U < d * grid_dt * T_percent:
+                            p.species = T['type']
+                            T_count = T_count + 1
+                        elif U < d * grid_dt * C_percent + a * M_percent * grid_dt:
+                            p.species = M['type']
+                            M_count = M_count + 1
+                        else:
+                            C_count = C_count + 1
+
+                    if p.species == T['type']:
+                        if U > (1 - gamma * grid_dt * M_percent):
+                            p.species = M['type']
+                            M_count = M_count + 1
+                        elif U > (1 - (gamma * grid_dt * M_percent + r * grid_dt * C_percent)):
+                            p.species = C['type']
+                            C_count = C_count + 1
+                        else:
+                            T_count = T_count + 1
+
+                    if p.species == M['type']:
+                        if U < (g*M_percent/(M_percent + T_percent)) * grid_dt * .1:
+                            p.species = T['type']
+                            T_count = T_count + 1
+                        else:
+                            M_count = M_count + 1
                 ## Store in row for specific column
                     node_type[row,column] = p.species
-                    node_density[row,column,] = p.density
+                    #node_density[row,column,] = p.density
                     column = column + 1
                 ## update position of row
                 column = 0
                 row = row + 1
+                # updating new percents
+                T_percent = T_count/number_of_nodes
+                M_percent = M_count/number_of_nodes
+                C_percent = C_count/number_of_nodes
+                #
+                T_count = 0
+                M_count = 0
+                C_count = 0
                 print('p updated')
             print('obs 1 done'+str(i))
 
@@ -131,10 +166,10 @@ def test_exponential_force():
             writer.writerows(node_type)
         csvFile.close()
 
-        with open(path + 'density_recording_test' + str(n) + '.csv', 'w') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows(node_density)
-        csvFile.close()
+        #with open(path + 'density_recording_test' + str(n) + '.csv', 'w') as csvFile:
+        #    writer = csv.writer(csvFile)
+        #    writer.writerows(node_density)
+        #csvFile.close()
 
 
 if __name__ == "__main__":
