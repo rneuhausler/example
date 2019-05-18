@@ -12,12 +12,12 @@ def test_exponential_force():
     upper_bound = [40, 40]
     periodic = [True, True]
 
-    sim_time = 100
-    number_of_observations = 1
+    sim_time = 10000
+    number_of_observations = 100 
     integrate_time = sim_time / number_of_observations
     dt = 0.01
 
-    grid_dt = 100
+    grid_dt = 100 #should be = to int time
     grid_updates_per_observation = int(integrate_time / grid_dt)
 
     ### Initial parameters
