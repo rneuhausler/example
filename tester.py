@@ -54,7 +54,7 @@ def test_exponential_force():
     if C['percent'] + T['percent'] + M['percent'] != 100:
         print "percentages do not add up to 100"
 
-    runs = 3
+    runs = 1
     for n in range(runs):
         #Checkered grid
         fixed = sparpy.Particles2(len(grid) ** 2)
