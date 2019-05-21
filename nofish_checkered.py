@@ -66,7 +66,8 @@ def test_exponential_force():
 
         fixed = sparpy.Particles2(len(grid) ** 2)
         count = 0
-        t=0
+        t = 0
+        
         for i in range(len(grid)):
             for j in range(len(grid)):
                 fixed[count].position = [grid[i],grid[j]]
@@ -74,15 +75,12 @@ def test_exponential_force():
                 if t == 0:
                     fixed[count].species = 0
                     t = 1
-                    C_count = C_count + 1
                 elif t == 1:
                     fixed[count].species = 1
                     t = 2
-                    M_count = M_count + 1
                 else:
                     fixed[count].species = 2
                     t = 0
-                    T_count = T_count + 1
                 count = count+1
                 print("grid point 1 created")
 
