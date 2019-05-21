@@ -27,16 +27,15 @@ def test_exponential_force():
     d = 0.4 * scale_dt
     gamma = 0.75 * scale_dt
     r = 1.0 * scale_dt
-    gp = 0.9 * scale_dt
-    gu = 0.1 * scale_dt
+    g = .3 * scale_dt
 
     D = 0.001    #Diffusivity
 
     #lr and la cannot be zero (in the denominator)
     C = {'cutoff':25, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':0,'percent':20}
-    T = {'cutoff':25, 'Ca':0, 'la':0.1, 'Cr':1, 'lr':4, 'type':1, 'percent':40}
+    T = {'cutoff':25, 'Ca':1, 'la':0.1, 'Cr':1, 'lr':4, 'type':1, 'percent':40}
     M = {'cutoff':10, 'Ca':1, 'la':5, 'Cr':0, 'lr':0.1, 'type':2, 'percent':40}
-    F = {'cutoff':6, 'Ca':0.05, 'la':5, 'Cr':1, 'lr':1, 'type':3, 'count': 20}
+    F = {'cutoff':6, 'Ca':1, 'la':5, 'Cr':8, 'lr':1, 'type':3, 'count': 20}
 
 
     #percent_coral = 60
@@ -106,7 +105,7 @@ def test_exponential_force():
     row = 0
     column = 0
 
-    path = 'coral_returned/'
+    path = 'coral_25_f/'
 
     ### Running the Simulation
 
@@ -136,7 +135,7 @@ def test_exponential_force():
                         p.species = C['type']
 
                 if p.species == M['type']:
-                    if U < ((gu + gp) * p.density[F['type']]) * grid_dt:
+                    if U < (g * p.density[F['type']]) * grid_dt:
                         p.species = T['type']
 
                 ## Store in row for specific column
@@ -146,6 +145,9 @@ def test_exponential_force():
             ## update position of row
             column = 0
             row = row + 1
+
+    n = 1
+
 
     with open(path + 'type_recording' + str(n) + '.csv', 'w') as csvFile:
         writer = csv.writer(csvFile)
