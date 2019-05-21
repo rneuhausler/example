@@ -56,7 +56,7 @@ def test_exponential_force():
         print "percentages do not add up to 100"
 
 
-    runs = 5
+    runs = 1
 
     for n in range(runs):
 
@@ -110,7 +110,7 @@ def test_exponential_force():
         row = 0
         column = 0
 
-        path = '5_runs/'
+        path = 'coral_returned_nf/'
 
         for i in range(number_of_observations):
 
@@ -124,7 +124,7 @@ def test_exponential_force():
                     U = random.uniform(0,1)
 
                     if p.species == C['type']:
-                        if U < d * grid_dt * p.density[C['type']]:
+                        if U < d * grid_dt:
                             p.species = T['type']
                         elif U < d * grid_dt * p.density[C['type']] + a * p.density[M['type']] * grid_dt:
                             p.species = M['type']
