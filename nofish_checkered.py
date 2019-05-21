@@ -110,7 +110,7 @@ def test_exponential_force():
         row = 0
         column = 0
 
-        path = 'coral_returned_nf/'
+        path = 'coral_returned_nf_25/'
 
         for i in range(number_of_observations):
 
