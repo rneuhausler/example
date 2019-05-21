@@ -9,7 +9,7 @@ def test_exponential_force():
     ### Setting up Environment
 
     lower_bound = [0, 0]
-    upper_bound = [40, 40]
+    upper_bound = [25, 25]
     periodic = [True, True]
 
     sim_time = 10000.0
@@ -30,8 +30,7 @@ def test_exponential_force():
     d = 0.4 * scale_dt
     gamma = 0.75 * scale_dt
     r = 1.0 * scale_dt
-    gp = 0.9 * scale_dt
-    gu = 0.1 * scale_dt
+    g = .3 * scale_dt
 
     D = 0.001    #Diffusivity
 
@@ -47,7 +46,7 @@ def test_exponential_force():
 
 
     lower_grid  = 2.5
-    upper_grid  = 37.5
+    upper_grid  = 22.5
     step_grid  = 5
     grid  = [lower_grid + x*step_grid for x in range(int((upper_grid-lower_grid)/step_grid)+1)]
 
@@ -56,7 +55,7 @@ def test_exponential_force():
         print "percentages do not add up to 100"
 
 
-    runs = 1
+    runs = 5
 
     for n in range(runs):
 
@@ -67,7 +66,7 @@ def test_exponential_force():
         fixed = sparpy.Particles2(len(grid) ** 2)
         count = 0
         t = 0
-        
+
         for i in range(len(grid)):
             for j in range(len(grid)):
                 fixed[count].position = [grid[i],grid[j]]
@@ -102,6 +101,8 @@ def test_exponential_force():
         ### Create Datatable to store each run and each node
 
         ### Running the Simulation
+
+        ### Create Datatable to store each run and each node
         number_of_nodes = len(grid) ** 2
         number_of_recordings = number_of_observations * grid_updates_per_observation
         node_type = np.zeros((number_of_recordings, number_of_nodes))
@@ -135,7 +136,7 @@ def test_exponential_force():
                             p.species = C['type']
 
                     if p.species == M['type']:
-                        if U < (gu + gp) * grid_dt:
+                        if U < g * grid_dt:
                             p.species = T['type']
 
                     ## Store in row for specific column
