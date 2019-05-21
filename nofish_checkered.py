@@ -66,6 +66,7 @@ def test_exponential_force():
 
         fixed = sparpy.Particles2(len(grid) ** 2)
         count = 0
+        t=0
         for i in range(len(grid)):
             for j in range(len(grid)):
                 fixed[count].position = [grid[i],grid[j]]
